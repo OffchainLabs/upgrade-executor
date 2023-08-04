@@ -1,6 +1,6 @@
 {
   "name": "upgrade-executor",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "repository": "git@github.com:OffchainLabs/upgrade-executor.git",
   "license": "Apache-2.0",
   "dependencies": {
