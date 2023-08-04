@@ -1,0 +1,6 @@
+cache/
+out/
+.env
+.vscode
+.idea
+node_modules/
