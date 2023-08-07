@@ -57,4 +57,20 @@ contract UpgradeExecutor is Initializable, AccessControlUpgradeable, ReentrancyG
 
         emit UpgradeExecuted(upgrade, msg.value, upgradeCallData);
     }
+
+    /// @notice Execute an upgrade by directly calling an upgrade contract
+    /// @dev    Only executor can call this.
+    function executeCall(address upgrade, bytes memory upgradeCallData)
+        public
+        payable
+        onlyRole(EXECUTOR_ROLE)
+        nonReentrant
+    {
+        // OZ Address library check if the address is a contract and bubble up inner revert reason
+        address(upgrade).functionCallWithValue(
+            upgradeCallData, msg.value, "UpgradeExecutor: inner call failed without reason"
+        );
+
+        emit UpgradeExecuted(upgrade, msg.value, upgradeCallData);
+    }
 }
