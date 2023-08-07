@@ -19,6 +19,9 @@ contract UpgradeExecutor is Initializable, AccessControlUpgradeable, ReentrancyG
     /// @notice Emitted when an upgrade execution occurs
     event UpgradeExecuted(address indexed upgrade, uint256 value, bytes data);
 
+    /// @notice Emitted when target call occurs
+    event TargetCallExecuted(address indexed target, uint256 value, bytes data);
+
     constructor() {
         _disableInitializers();
     }
@@ -58,19 +61,19 @@ contract UpgradeExecutor is Initializable, AccessControlUpgradeable, ReentrancyG
         emit UpgradeExecuted(upgrade, msg.value, upgradeCallData);
     }
 
-    /// @notice Execute an upgrade by directly calling an upgrade contract
+    /// @notice Execute an upgrade by directly calling target contract
     /// @dev    Only executor can call this.
-    function executeCall(address upgrade, bytes memory upgradeCallData)
+    function executeCall(address target, bytes memory targetCallData)
         public
         payable
         onlyRole(EXECUTOR_ROLE)
         nonReentrant
     {
         // OZ Address library check if the address is a contract and bubble up inner revert reason
-        address(upgrade).functionCallWithValue(
-            upgradeCallData, msg.value, "UpgradeExecutor: inner call failed without reason"
+        address(target).functionCallWithValue(
+            targetCallData, msg.value, "UpgradeExecutor: inner call failed without reason"
         );
 
-        emit UpgradeExecuted(upgrade, msg.value, upgradeCallData);
+        emit TargetCallExecuted(target, msg.value, targetCallData);
     }
 }
