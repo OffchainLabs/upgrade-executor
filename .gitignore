@@ -1,4 +1,6 @@
+build/
 cache/
+cache_hardhat/
 out/
 .env
 .vscode
