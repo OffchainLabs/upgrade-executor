@@ -1,8 +1,9 @@
 {
-  "name": "upgrade-executor",
+  "name": "@offchainlabs/upgrade-executor",
   "version": "1.0.0-alpha.0",
   "repository": "git@github.com:OffchainLabs/upgrade-executor.git",
-  "license": "Apache-2.0",
+  "author": "Offchain Labs",
+  "license": "Apache 2.0",
   "dependencies": {
     "@openzeppelin/contracts": "4.7.3",
     "@openzeppelin/contracts-upgradeable": "4.7.3"
