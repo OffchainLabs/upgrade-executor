@@ -1,6 +1,6 @@
 {
   "name": "@offchainlabs/upgrade-executor",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.2",
   "repository": "git@github.com:OffchainLabs/upgrade-executor.git",
   "author": "Offchain Labs",
   "license": "Apache 2.0",
