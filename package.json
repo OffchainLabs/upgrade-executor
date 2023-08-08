@@ -1,18 +1,19 @@
 {
   "name": "@offchainlabs/upgrade-executor",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-beta.0",
   "repository": "git@github.com:OffchainLabs/upgrade-executor.git",
   "author": "Offchain Labs",
   "license": "Apache 2.0",
   "files": [
     "src/",
+    "build/contracts",
     "build/types"
   ],
   "bugs": {
     "url": "https://github.com/offchainlabs/upgrade-executor/issues"
   },
   "scripts": {
-    "prepublishOnly": "forge clean && forge build",
+    "prepublishOnly": "hardhat clean && hardhat compile",
     "test": "forge test",
     "format": "forge fmt"
   },
