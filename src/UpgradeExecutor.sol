@@ -26,6 +26,9 @@ contract UpgradeExecutor is
     /// @notice Emitted when an upgrade execution occurs
     event UpgradeExecuted(address indexed upgrade, uint256 value, bytes data);
 
+    /// @notice Emitted when target call occurs
+    event TargetCallExecuted(address indexed target, uint256 value, bytes data);
+
     constructor() {
         _disableInitializers();
     }
@@ -63,5 +66,21 @@ contract UpgradeExecutor is
         );
 
         emit UpgradeExecuted(upgrade, msg.value, upgradeCallData);
+    }
+
+    /// @notice Execute an upgrade by directly calling target contract
+    /// @dev    Only executor can call this.
+    function executeCall(address target, bytes memory targetCallData)
+        public
+        payable
+        onlyRole(EXECUTOR_ROLE)
+        nonReentrant
+    {
+        // OZ Address library check if the address is a contract and bubble up inner revert reason
+        address(target).functionCallWithValue(
+            targetCallData, msg.value, "UpgradeExecutor: inner call failed without reason"
+        );
+
+        emit TargetCallExecuted(target, msg.value, targetCallData);
     }
 }
