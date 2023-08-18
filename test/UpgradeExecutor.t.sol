@@ -80,6 +80,23 @@ contract UpgradeExecutorTest is Test {
         assertEq(setter.lastSender(), address(ue), "Sender after");
     }
 
+    function testExecuteCall() external {
+        UpgradeExecutor ue = deployAndInit();
+        Setter setter = new Setter();
+
+        uint256 val = 35;
+        bytes memory data = abi.encodeWithSelector(setter.setVal.selector, val);
+
+        assertEq(setter.val(), 0, "Val before");
+        assertEq(setter.lastSender(), address(0), "Sender before");
+
+        vm.prank(executor0);
+        ue.executeCall(address(setter), data);
+
+        assertEq(setter.val(), val, "Val after");
+        assertEq(setter.lastSender(), address(ue), "Sender after");
+    }
+
     function testCantExecuteEOA() external {
         UpgradeExecutor ue = deployAndInit();
         bytes memory data;
@@ -87,6 +104,15 @@ contract UpgradeExecutorTest is Test {
         vm.prank(executor0);
         vm.expectRevert("Address: delegate call to non-contract");
         ue.execute(address(111), data);
+    }
+
+    function testCantExecuteCallEOA() external {
+        UpgradeExecutor ue = deployAndInit();
+        bytes memory data;
+
+        vm.prank(executor0);
+        vm.expectRevert("Address: call to non-contract");
+        ue.executeCall(address(111), data);
     }
 
     function roleError(address account, bytes32 role) internal pure returns (string memory) {
@@ -113,6 +139,18 @@ contract UpgradeExecutorTest is Test {
         ue.execute(address(se), data);
     }
 
+    function testExecuteCallFailsForAdmin() external {
+        UpgradeExecutor ue = deployAndInit();
+        Setter setter = new Setter();
+
+        uint256 val = 25;
+        bytes memory data = abi.encodeWithSelector(setter.setVal.selector, val);
+
+        vm.expectRevert(bytes(roleError(address(ue), ue.EXECUTOR_ROLE())));
+        vm.prank(address(ue));
+        ue.executeCall(address(setter), data);
+    }
+
     function testExecuteFailsForNobody() external {
         UpgradeExecutor ue = deployAndInit();
         Setter setter = new Setter();
@@ -124,6 +162,18 @@ contract UpgradeExecutorTest is Test {
         vm.expectRevert(bytes(roleError(nobody, ue.EXECUTOR_ROLE())));
         vm.prank(nobody);
         ue.execute(address(se), data);
+    }
+
+    function testExecuteCallFailsForNobody() external {
+        UpgradeExecutor ue = deployAndInit();
+        Setter setter = new Setter();
+
+        uint256 val = 25;
+        bytes memory data = abi.encodeWithSelector(setter.setVal.selector, val);
+
+        vm.expectRevert(bytes(roleError(nobody, ue.EXECUTOR_ROLE())));
+        vm.prank(nobody);
+        ue.executeCall(address(setter), data);
     }
 
     function testAdminCanChangeExecutor() external {
@@ -138,6 +188,19 @@ contract UpgradeExecutorTest is Test {
         vm.prank(executor1);
         ue.execute(address(ae), data);
 
-        assertEq(ue.hasRole(ue.EXECUTOR_ROLE(), executor2), true, "executor 2 before");
+        assertEq(ue.hasRole(ue.EXECUTOR_ROLE(), executor2), true, "executor 2 after");
+    }
+
+    function testAdminCanChangeExecutorUsingCall() external {
+        UpgradeExecutor ue = deployAndInit();
+
+        bytes memory data =
+            abi.encodeWithSelector(ue.grantRole.selector, ue.EXECUTOR_ROLE(), executor2);
+
+        assertEq(ue.hasRole(ue.EXECUTOR_ROLE(), executor2), false, "executor 2 before");
+        vm.prank(executor1);
+        ue.executeCall(address(ue), data);
+
+        assertEq(ue.hasRole(ue.EXECUTOR_ROLE(), executor2), true, "executor 2 after");
     }
 }
