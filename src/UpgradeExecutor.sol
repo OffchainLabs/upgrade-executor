@@ -5,12 +5,19 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
+import "./IUpgradeExecutor.sol";
+
 /// @title  A root contract from which it execute upgrades
 /// @notice Does not contain upgrade logic itself, only the means to call upgrade contracts and execute them
 /// @dev    We use these upgrade contracts as they allow multiple actions to take place in an upgrade
 ///         and for these actions to interact. However because we are delegatecalling into these upgrade
 ///         contracts, it's important that these upgrade contract do not touch or modify contract state.
-contract UpgradeExecutor is Initializable, AccessControlUpgradeable, ReentrancyGuard {
+contract UpgradeExecutor is
+    Initializable,
+    AccessControlUpgradeable,
+    ReentrancyGuard,
+    IUpgradeExecutor
+{
     using Address for address;
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
