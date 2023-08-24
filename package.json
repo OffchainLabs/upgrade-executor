@@ -6,8 +6,7 @@
   "license": "Apache 2.0",
   "files": [
     "src/",
-    "build/contracts/src",
-    "build/types"
+    "build/contracts/src"
   ],
   "bugs": {
     "url": "https://github.com/offchainlabs/upgrade-executor/issues"
