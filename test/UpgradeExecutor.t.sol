@@ -203,4 +203,11 @@ contract UpgradeExecutorTest is Test {
 
         assertEq(ue.hasRole(ue.EXECUTOR_ROLE(), executor2), true, "executor 2 after");
     }
+
+    function testRolesAreExposed() external {
+        IUpgradeExecutor ue = IUpgradeExecutor(deployAndInit());
+
+        assertEq(ue.ADMIN_ROLE(), keccak256("ADMIN_ROLE"), "Admin role");
+        assertEq(ue.EXECUTOR_ROLE(), keccak256("EXECUTOR_ROLE"), "Executor role");
+    }
 }
